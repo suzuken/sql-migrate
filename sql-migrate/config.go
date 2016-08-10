@@ -23,12 +23,25 @@ var dialects = map[string]gorp.Dialect{
 	"mysql":    gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8"},
 }
 
+const (
+	// ENV_CONFIG is a key for environment variable
+	// to specify the config file.
+	ENV_CONFIG = "SQL_MIGRATE_CONFIG"
+
+	// ENV_ENV is a key for environment variable
+	// to specify the env.
+	ENV_ENV = "SQL_MIGRATE_ENV"
+
+	DEFAULT_DBCONFIG = "dbconfig.yml"
+	DEFAULT_ENV      = "development"
+)
+
 var ConfigFile string
 var ConfigEnvironment string
 
 func ConfigFlags(f *flag.FlagSet) {
-	f.StringVar(&ConfigFile, "config", "dbconfig.yml", "Configuration file to use.")
-	f.StringVar(&ConfigEnvironment, "env", "development", "Environment to use.")
+	f.StringVar(&ConfigFile, "config", DEFAULT_DBCONFIG, "Configuration file to use.")
+	f.StringVar(&ConfigEnvironment, "env", DEFAULT_ENV, "Environment to use.")
 }
 
 type Environment struct {
@@ -40,6 +53,12 @@ type Environment struct {
 }
 
 func ReadConfig() (map[string]*Environment, error) {
+	// Read config file from environment variable
+	if ConfigFile == DEFAULT_DBCONFIG {
+		if c := os.Getenv(ENV_CONFIG); c != "" {
+			ConfigFile = c
+		}
+	}
 	file, err := ioutil.ReadFile(ConfigFile)
 	if err != nil {
 		return nil, err
@@ -58,6 +77,13 @@ func GetEnvironment() (*Environment, error) {
 	config, err := ReadConfig()
 	if err != nil {
 		return nil, err
+	}
+
+	// Read config environment from environment variables
+	if ConfigEnvironment == DEFAULT_ENV {
+		if c := os.Getenv(ENV_ENV); c != "" {
+			ConfigEnvironment = c
+		}
 	}
 
 	env := config[ConfigEnvironment]
