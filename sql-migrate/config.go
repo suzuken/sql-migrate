@@ -9,8 +9,8 @@ import (
 	"os"
 
 	"github.com/rubenv/sql-migrate"
+	yaml "github.com/suzuken/yamlssm"
 	"gopkg.in/gorp.v1"
-	"gopkg.in/yaml.v2"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
