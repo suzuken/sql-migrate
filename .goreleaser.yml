@@ -1,8 +1,10 @@
 builds:
   - binary: sql-migrate-ssm
+    main: ./sql-migrate
     goos:
-      - windows
       - darwin
       - linux
     goarch:
       - amd64
+    env:
+      - CGO_ENABLED=0
