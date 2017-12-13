@@ -1,0 +1,38 @@
+version: 2
+
+jobs:
+  test:
+    - make test
+
+  cross:
+    working_directory: /work
+    docker: [{image: 'docker:17.06-git'}]
+    parallelism: 3
+    steps:
+      - checkout
+      - setup_remote_docker:
+            reusable: true
+            exclusive: false
+      - run:
+          name: "Cross"
+          command: |
+            dockerfile=dockerfiles/Dockerfile.cross
+            echo "COPY . ." >> $dockerfile
+            docker build -f $dockerfile --tag cli-builder:$CIRCLE_BUILD_NUM .
+            name=cross-$CIRCLE_BUILD_NUM-$CIRCLE_NODE_INDEX
+            docker run \
+                -e CROSS_GROUP=$CIRCLE_NODE_INDEX \
+                --name $name cli-builder:$CIRCLE_BUILD_NUM \
+                make cross
+            docker cp \
+                $name:/go/src/github.com/rubenv/sql-migrate/build \
+                /work/build
+      - store_artifacts:
+          path: /work/build
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - test
+      - cross

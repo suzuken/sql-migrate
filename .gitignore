@@ -3,3 +3,6 @@
 
 /sql-migrate/test.db
 /test.db
+
+.DS_Store
+/build/

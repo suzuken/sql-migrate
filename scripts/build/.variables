@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -eu
+
+PLATFORM=${PLATFORM:-}
+VERSION=${VERSION:-"unknown-version"}
+GITCOMMIT=${GITCOMMIT:-$(git rev-parse --short HEAD 2> /dev/null || true)}
+BUILDTIME=${BUILDTIME:-$(date --utc --rfc-3339 ns 2> /dev/null | sed -e 's/ /T/')}
+
+export LDFLAGS="\
+    -w \
+    -X \"github.com/rubenv/sql-migrate.GitCommit=${GITCOMMIT}\" \
+    -X \"github.com/rubenv/sql-migrate.BuildTime=${BUILDTIME}\" \
+    -X \"github.com/rubenv/sql-migrate.Version=${VERSION}\" \
+    ${LDFLAGS:-} \
+"
+
+GOOS="${GOOS:-$(go env GOHOSTOS)}"
+GOARCH="${GOARCH:-$(go env GOHOSTARCH)}"
+export TARGET="build/sql-migrate-ssm-$GOOS-$GOARCH"
+export SOURCE="github.com/rubenv/sql-migrate/sql-migrate"
