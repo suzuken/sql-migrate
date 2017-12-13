@@ -2,6 +2,8 @@ version: 2
 
 jobs:
   test:
+    machine:
+      enabled: true
     working_directory: /work
     steps:
       - checkout
