@@ -4,7 +4,6 @@ jobs:
   test:
     machine:
       enabled: true
-    working_directory: /work
     steps:
       - checkout
       - run:
@@ -13,6 +12,8 @@ jobs:
             make test
 
   cross:
+    machine:
+      enabled: false
     working_directory: /work
     docker: [{image: 'docker:17.06-git'}]
     parallelism: 3
