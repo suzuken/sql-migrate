@@ -3,7 +3,6 @@ version: 2
 jobs:
   test:
     working_directory: /work
-    docker: [{image: 'docker:17.06-git'}]
     steps:
       - checkout
       - run:
