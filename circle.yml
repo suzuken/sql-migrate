@@ -2,7 +2,19 @@ version: 2
 
 jobs:
   test:
-    - make test
+    working_directory: /work
+    docker: [{image: 'docker:17.06-git'}]
+    steps:
+      - checkout
+      - setup_remote_docker:
+            reusable: true
+            exclusive: false
+      - run:
+        name: "test"
+        command:
+          - docker run \
+              --name $name cli-builder:$CIRCLE_BUILD_NUM \
+              make test
 
   cross:
     working_directory: /work
