@@ -10,11 +10,11 @@ jobs:
             reusable: true
             exclusive: false
       - run:
-        name: "test"
-        command:
-          - docker run \
-              --name $name cli-builder:$CIRCLE_BUILD_NUM \
-              make test
+          name: "test"
+          command:
+            - docker run \
+                --name $name cli-builder:$CIRCLE_BUILD_NUM \
+                make test
 
   cross:
     working_directory: /work
